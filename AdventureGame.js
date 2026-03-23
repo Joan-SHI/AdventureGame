@@ -45,11 +45,19 @@ let hasWeapon = false; // Track if the player has bought a weapon
 let hasPotion = false; // Track if the player has bought a healing potion
 let hasArmor = false; // Track if the player has bought armor
 
-// Main game loop
-while (gameRunning) {
-    // Location display 
+// Show status function (can be called from any location)
+function showStatus() {
+    console.log("\n===" + playerName + "'s Stats===");
+    console.log("Health: " + playerHealth);
+    console.log("Gold: " + playerGold);
+    console.log("Location: " + currentLocation);
+}
+
+// Show location function (can be called from any location)
+function showLocation() {
+    console.log("\n=== " + currentLocation.toUpperCase() + " ===");
     if (currentLocation === "village") {
-        console.log("\n=== Village ===");
+
         console.log("You are in a bustling village. The blacksmith and market are nearby.");
 
         console.log("\nWhat would you like to do?");
@@ -59,14 +67,9 @@ while (gameRunning) {
         console.log("4. Check your stats");
         console.log("5. Check your inventory");
         console.log("6. Quit game");
-
-        if (firstVisit) {
-            console.log("\nVillager: 'Welcome, adventurer! Rumor has it there is a dragon in the mountains...'");
-            firstVisit = false; // Set to false after the first visit
-        }
     }
     else if (currentLocation === "blacksmith") {
-        console.log("\n=== Blacksmith ===");
+
         console.log("The heat from the forge fills the air. Weapons and armor line the walls.");
 
         console.log("\nWhat would you like to do?");
@@ -76,7 +79,7 @@ while (gameRunning) {
         console.log("4. Quit game");
     }
     else if (currentLocation === "market") {
-        console.log("\n=== Market ===");
+
         console.log("Merchants sell their wares from colorful stalls. A potion seller catches your eye.");
 
         console.log("\nWhat would you like to do?");
@@ -85,6 +88,22 @@ while (gameRunning) {
         console.log("3. Check inventory");
         console.log("4. Quit game");
     }
+}
+
+// Main game loop
+while (gameRunning) {
+
+    //showStatus(); // Display player stats at the start of each loop iteration
+    // Location display 
+    showLocation();
+
+
+    if (firstVisit) {
+        console.log("\nVillager: 'Welcome, adventurer! Rumor has it there is a dragon in the mountains...'");
+        firstVisit = false; // Set to false after the first visit
+    }
+
+
     else if (currentLocation === "forest") {
         console.log("\n=== Forest ===");
         console.log("The forest is dense and eerie. You can hear the sounds of creatures lurking.");
@@ -146,10 +165,7 @@ while (gameRunning) {
                 }
                 else if (choiceNumber === 4) {
                     // Show status
-                    console.log("\n===" + playerName + "'s Stats===");
-                    console.log("Health: " + playerHealth);
-                    console.log("Gold: " + playerGold);
-                    console.log("Location: " + currentLocation);
+                    showStatus();
                 }
                 else if (choiceNumber === 5) {
                     // Show inventory
@@ -179,10 +195,7 @@ while (gameRunning) {
                 }
                 else if (choiceNumber === 2) {
                     // Show status
-                    console.log("\n===" + playerName + "'s Stats===");
-                    console.log("Health: " + playerHealth);
-                    console.log("Gold: " + playerGold);
-                    console.log("Location: " + currentLocation);
+                    showStatus();
                 }
                 else if (choiceNumber === 3) {
                     // Show inventory
