@@ -11,5 +11,14 @@
   "description": "",
   "dependencies": {
     "readline-sync": "^1.4.10"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Joan-SHI/AdventureGame.git"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Joan-SHI/AdventureGame/issues"
+  },
+  "homepage": "https://github.com/Joan-SHI/AdventureGame#readme"
 }
