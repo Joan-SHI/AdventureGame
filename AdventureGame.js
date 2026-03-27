@@ -90,42 +90,87 @@ function showLocation() {
     }
 }
 
+function move(choiceNumber) {
+    let validMove = false;
+
+    if (currentLocation === "village") {
+        if (choiceNumber === 1) {
+            currentLocation = "blacksmith";
+            console.log("\nYou head to the blacksmith.");
+            validMove = true;
+        }
+        else if (choiceNumber === 2) {
+            currentLocation = "market";
+            console.log("\nYou head to the market.");
+            validMove = true;
+        }
+        else if (choiceNumber === 3) {
+            currentLocation = "forest";
+            console.log("\nYou venture into the forest.");
+            validMove = true;
+        }
+    }
+    else if (currentLocation === "blacksmith" || currentLocation === "market") {
+        if (choiceNumber === 1) {
+            currentLocation = "village";
+            console.log("\nYou return to the village.");
+            validMove = true;
+        }
+    }
+    return validMove; // Return whether the move was valid or not
+}
+
+// Handle combat 
+function handleCombat() {
+    if (hasWeapon) {
+        console.log("You have a baguette! You attack!");
+        console.log("You won and found 10 gold!");
+        playerGold = + 10; // Increase player's gold by 10 after winning combat
+        return true; // Return true to indicate player won the combat
+    } else {
+        console.log("You have no weapon! You must run away!");
+        updateHealth(-20); // Player takes damage for running away without a weapon
+        return false; // Return false to indicate player lost the combat    
+    }
+}
+
+// Updates player health within valid range 
+function updateHealth(amount) {
+    playerHealth += amount; // Update health by the specified amount
+    if (playerHealth > 100) {
+        playerHealth = 100; // Cap health at 100
+        console.log("Your health is full at 100!"); // Notify player when health is fully restored
+
+    } else if (playerHealth < 0) {
+        playerHealth = 0; // Ensure health doesn't drop below 0
+        console.log("Your health has dropped to 0! You are defeated!"); // Notify player of defeat when health reaches 0    
+    }
+    console.log("Your health is now: " + playerHealth); // Display updated health
+    return playerHealth; // Return the updated health value
+}
+
+// Check inventory function (can be called from any location)
+function checkInventory() {
+    console.log("\n===" + playerName + "'s Inventory===");
+    if (!hasWeapon && !hasPotion && !hasArmor) {
+        console.log("Your inventory is empty.");
+    } else {
+        if (hasWeapon) {
+            console.log("- Sword");
+        }
+
+        if (hasPotion) {
+            console.log("- Health Potion");
+        }
+        if (hasArmor) {
+            console.log("- Shield");
+        }
+    }
+}
 // Main game loop
 while (gameRunning) {
-
-    //showStatus(); // Display player stats at the start of each loop iteration
-    // Location display 
+    //show current location and options
     showLocation();
-
-
-    if (firstVisit) {
-        console.log("\nVillager: 'Welcome, adventurer! Rumor has it there is a dragon in the mountains...'");
-        firstVisit = false; // Set to false after the first visit
-    }
-
-
-    else if (currentLocation === "forest") {
-        console.log("\n=== Forest ===");
-        console.log("The forest is dense and eerie. You can hear the sounds of creatures lurking.");
-
-        //Simple battle when entering forest
-        let inBattle = true;
-        let monsterHealth = 3; // Monster's health for the battle
-        console.log("\nBattle starts! A wild monster appears! ");
-
-        while (inBattle) {
-            console.log("Monster's health: " + monsterHealth);
-            console.log("You attack!");
-            monsterHealth--; // Player's attack reduces monster health by 1
-
-            if (monsterHealth <= 0) {
-                console.log("You defeated the monster!");
-                inBattle = false; // End battle when monster is defeated
-            }
-        }
-        currentLocation = "village"; // Return to village after battle
-        console.log("\nYou return to the village after the battle.");
-    }
 
     // Get and validate player choice
     let validChoice = false;
@@ -151,32 +196,27 @@ while (gameRunning) {
                 }
 
                 validChoice = true;
-                if (choiceNumber === 1) {
-                    currentLocation = "blacksmith";
-                    console.log("\nYou head to the blacksmith.");
+
+                // ???????
+                if (choiceNumber <= 3) {
+                    if (!move(choiceNumber)) {
+                        console.log("\nYou can't go there!");
+                    }
+                    else if (choiceNumber === 3) {
+                        console.log("\nA monster appears!");
+                        if (!handleCombat()) {
+                            currentLocation = "village";
+                        }
+                    }
                 }
-                else if (choiceNumber === 2) {
-                    currentLocation = "market";
-                    console.log("\nYou explore the market.");
-                }
-                else if (choiceNumber === 3) {
-                    currentLocation = "forest";
-                    console.log("\nYou venture into the forest.");
-                }
+
                 else if (choiceNumber === 4) {
                     // Show status
                     showStatus();
                 }
                 else if (choiceNumber === 5) {
                     // Show inventory
-                    console.log("\n===" + playerName + "'s Inventory===");
-                    if (inventory.length === 0) {
-                        console.log("Your inventory is empty.");
-                    } else {
-                        inventory.forEach((item, index) => {
-                            console.log(`${index + 1}. ${item}`);
-                        });
-                    }
+                    checkInventory();
                 }
                 else if (choiceNumber === 6) {
                     gameRunning = false; // Exit the game loop
@@ -190,8 +230,7 @@ while (gameRunning) {
 
                 validChoice = true;
                 if (choiceNumber === 1) {
-                    currentLocation = "village";
-                    console.log("\nYou return to the " + currentLocation + ".");
+                    move(choiceNumber); // Move back to the village
                 }
                 else if (choiceNumber === 2) {
                     // Show status
@@ -199,14 +238,7 @@ while (gameRunning) {
                 }
                 else if (choiceNumber === 3) {
                     // Show inventory
-                    console.log("\n===" + playerName + "'s Inventory===");
-                    if (inventory.length === 0) {
-                        console.log("Your inventory is empty.");
-                    } else {
-                        inventory.forEach((item, index) => {
-                            console.log(`${index + 1}. ${item}`);
-                        });
-                    }
+                    checkInventory();
                 }
                 else if (choiceNumber === 4) {
                     gameRunning = false; // Exit the game loop
@@ -219,6 +251,8 @@ while (gameRunning) {
             console.log("Please try again."); // Prompt user to try again after an error
         }
     }
+
+    // Check if player health has dropped to 0 or below after combat or other events
     if (playerHealth <= 0) {
         console.log("\nYou have been defeated! Game over.");
         gameRunning = false; // End the game if player health drops to 0 or below
