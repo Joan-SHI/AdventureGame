@@ -12,12 +12,14 @@ let gameRunning = true;
 let playerName = "";
 let playerHealth = 100;
 let playerGold = 20;
-let hasWeapon = false; // Track if the player has bought a weapon
-let hasPotion = false; // Track if the player has bought a healing potion
-let hasArmor = false; // Track if the player has bought armor
+// let hasWeapon = false; // Track if the player has bought a weapon
+// let hasPotion = false; // Track if the player has bought a healing potion
+// let hasArmor = false; // Track if the player has bought armor
 
 // let firstVisit = true; // Track if it's the player's first visit to the village
-// let inventory = [];
+
+// Inventory system to track items the player has acquired
+let inventory = [];
 
 // Weapon damage (starts at 0 until player buys a sword)
 let weaponDamage = 0; // Will increase to 10 when player buys a sword
@@ -34,6 +36,7 @@ function showStatus() {
     console.log("\n===" + playerName + "'s Stats===");
     console.log("Health: " + playerHealth);
     console.log("Gold: " + playerGold);
+    console.log(inventory.length > 0 ? "Inventory: " + inventory.join(", ") : "Inventory: Empty");
     console.log("Location: " + currentLocation);
 }
 
@@ -49,7 +52,7 @@ function showLocation() {
         console.log("2. Explore the market");
         console.log("3. Enter the forest");
         console.log("4. Check your stats");
-        console.log("5. Check your inventory");
+        console.log("5. Use item");
         console.log("6. Help");
         console.log("7. Quit game");
     }
@@ -61,7 +64,7 @@ function showLocation() {
         console.log("1. Buy a sword(10 gold)");
         console.log("2. Return to the village");
         console.log("3. Check status");
-        console.log("4. Check inventory");
+        console.log("4. Use item");
         console.log("5. Help");
         console.log("6. Quit game");
     }
@@ -73,7 +76,7 @@ function showLocation() {
         console.log("1. Buy a healing potion(5 gold)");
         console.log("2. Return to the village");
         console.log("3. Check status");
-        console.log("4. Check inventory");
+        console.log("4. Use item");
         console.log("5. Help");
         console.log("6. Quit game");
     }
@@ -84,7 +87,7 @@ function showLocation() {
         console.log("\nWhat would you like to do?");
         console.log("1. Return to the village");
         console.log("2. Check status");
-        console.log("3. Check inventory");
+        console.log("3. Use item");
         console.log("4. Help");
         console.log("5. Quit game");
     }
@@ -147,7 +150,7 @@ function move(choiceNumber) {
  *  @returns {boolean} - true if player wins combat, false if player loses combat
 */
 function handleCombat() {
-    if (hasWeapon) {
+    if (inventory.includes("Sword")) {
         console.log("You have a baguette! You attack!");
         console.log("You won and found 10 gold!");
         playerGold += 10; // Increase player's gold by 10 after winning combat
@@ -187,10 +190,10 @@ function updateHealth(amount) {
  * @returns {boolean} true if item was used successfully, false if not
  */
 function useItem() {
-    if (hasPotion) {
+    if (inventory.includes("potion")) {
         console.log("You use a health potion!");
         updateHealth(healingPotionRestoration); // Restore health by the potion's restoration amount
-        hasPotion = false; // Remove potion from inventory after use
+        inventory.splice(inventory.indexOf("potion"), 1); // Remove potion from inventory after use
         return true; // Return true to indicate potion was used successfully
     }
     console.log("You have no potions to use!"); // Notify player if they try to use a potion they don't have    
@@ -200,17 +203,17 @@ function useItem() {
 // Displays the player's inventory. 
 function checkInventory() {
     console.log("\n===" + playerName + "'s Inventory===");
-    if (!hasWeapon && !hasPotion && !hasArmor) {
+    if (inventory.length === 0) {
         console.log("Your inventory is empty.");
     } else {
-        if (hasWeapon) {
+        if (inventory.includes("Sword")) {
             console.log("- Sword");
         }
 
-        if (hasPotion) {
+        if (inventory.includes("potion")) {
             console.log("- Health Potion");
         }
-        if (hasArmor) {
+        if (inventory.includes("Shield")) {
             console.log("- Shield");
         }
     }
@@ -225,7 +228,7 @@ function buyFmBlacksmith() {
 
     if (playerGold >= 10) {
         playerGold -= 10; // Deduct gold for the sword
-        hasWeapon = true; // Player now has a weapon
+        inventory.push("Sword"); // Add sword to inventory
         weaponDamage = 10; // Set weapon damage to 10 when player buys a sword
         console.log("You bought a sword! Your attacks will now do more damage.");
         return true; // Return true to indicate purchase was successful
@@ -240,7 +243,7 @@ function buyFmMarket() {
 
     if (playerGold >= 5) {
         playerGold -= 5; // Deduct gold for the potion
-        hasPotion = true; // Player now has a potion
+        inventory.push("potion"); // Player now has a potion
         console.log("You bought a health potion!");
         return true; // Return true to indicate purchase was successful
     } else {
@@ -354,8 +357,8 @@ while (gameRunning) {
                     showStatus();
                 }
                 else if (choiceNumber === 5) {
-                    // Show inventory
-                    checkInventory();
+                    // Use item
+                    useItem();
                 }
                 else if (choiceNumber === 6) {
                     // Show help menu
@@ -387,8 +390,8 @@ while (gameRunning) {
                     showStatus();
                 }
                 else if (choiceNumber === 4) {
-                    // Show inventory
-                    checkInventory();
+                    // Use item
+                    useItem();
                 }
                 else if (choiceNumber === 5) {
                     // Show help menu
@@ -413,8 +416,8 @@ while (gameRunning) {
                     showStatus();
                 }
                 else if (choiceNumber === 3) {
-                    // Show inventory
-                    checkInventory();
+                    // Use item
+                    useItem();
                 }
                 else if (choiceNumber === 4) {
                     // Show help menu
